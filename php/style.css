@@ -1,0 +1,59 @@
+body {
+    padding-top:30px;
+}
+
+#mainCont {
+    width:50em;
+    text-align:center;
+    margin:auto;
+}
+
+#start {
+    margin:auto;
+}
+
+.run {
+    border: 2px solid #666666;
+    width:100%;
+    padding:5px;
+    margin:2px;
+    position:relative;
+    text-align:left;
+}
+
+.sample, .ouf, #input {
+    font-family:monospace;
+    font-size:100%;
+    border:2px;
+}
+
+#input {
+    width:100%;
+}
+
+.ok {
+    color:green;
+}
+
+.fail {
+    color:red;
+}
+
+.speed, .time {
+    font-family:monospace;
+    position:absolute;
+    right:3px;
+}
+
+.speed {
+    bottom:3px;
+}
+
+.time {
+    top:3px;
+}
+
+.final {
+    margin-left:3px;
+    font-family:monospace;
+}
