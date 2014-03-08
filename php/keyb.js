@@ -22,7 +22,7 @@ var text;
 var currentDiv;
 var startTime = -1;
 var wordNum = 0;
-var totalWords = 5;
+var totalWords = 10;
 var totalLen = 0;
 var totalTime = 0;
 var totalOk = 0;
