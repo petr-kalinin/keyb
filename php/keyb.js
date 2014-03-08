@@ -9,28 +9,9 @@ var totalTime = 0;
 var totalOk = 0;
 var corrFactor = 60 * 1000;
 var used = [];
-var samples = [
-  'var i:integer;',
-  'a:array[1..100] of integer;',
-  'f:text;',
-  'ok:boolean;',
-  'x:extended;',
-  's:string;',
-  'record x,y:integer; end;',
-  'for i:=1 to n do begin',
-  'read(n,m);',
-  "write(a,' ',b);",
-  'if a mod 2=0 then begin',
-  'x:=n div 2 + 1;',
-  'for i:=n downto 1 do',
-  'if (a=0) and (b=0) then',
-  'if (a=0) or (b=0) then',
-  'end else begin',
-  'while i*i<n do',
-  'while true do begin',
-  'repeat until false;'
-];
-
+var samples = [];
+var fName = 'pascal_beginners.txt';
+var ignoreSpaces = true;
 
 function finish() {
     s = "Total samples: " + totalOk + "<br/>" +
@@ -41,9 +22,40 @@ function finish() {
     body.append("<div class='final'>" + s +"</div>");
 }
 
+function removeDoubleSpaces(s) {
+    s1 = s[0];
+    for (i=1; i<s.length; i++)
+        if ((s[i]!=' ') || (s[i-1]!=' '))
+            s1 += s[i];
+    return s1;
+}
+
+function isWord(c) {
+    return (c=='_') || ((c>='A')&&(c<='Z')) || ((c>='a')&&(c<='z')) || ((c>='0')&&(c<='9'));
+}
+
+function removeSpaces(s) {
+    s1 = '';
+    if ( ignoreSpaces ) {
+        s1 = '';
+        s = removeDoubleSpaces(s);
+        for (i=0; i<s.length; i++) {
+            if (s[i] == ' ') {
+                if (i==0) continue;
+                if (i==s.length-1) continue;
+                // we consider a space to be important iff it is surrounded by word characters
+                // or by non-word characters
+                if (isWord(s[i-1]) != isWord(s[i+1])) continue;
+            }
+            s1 += s[i];
+        }
+    } else s1 = s;
+    return s1;
+}
+
 function processResult(time) {
     ouf = $( "#input" ).val();
-    ok = (ouf == text);
+    ok = (removeSpaces(ouf) == removeSpaces(text));
     if (ok) {
         totalLen += text.length;
         totalTime += time;
@@ -52,7 +64,8 @@ function processResult(time) {
     cls = (ok? "ok" : "fail");
     $( "#input" ).replaceWith("<div class='ouf " + cls + "'></div>");
     $( "#current .ouf" ).text(ouf).html();
-    $( "#current .ouf" ).innerHtml += "&nbsp;";
+    $( "#current .ouf" ).innerHtml += " ";
+    $( "#current .ouf" ).wrapInner("<pre class='sample'/>");
     $( "#time" ).removeAttr('id').addClass(cls);
     $( "#speed" ).removeAttr('id').addClass(cls);
     currentDiv.removeAttr('id');
@@ -100,6 +113,7 @@ function startWord() {
     currentDiv = $( "#current");
     currentDiv.append("<div class='sample'></div>");
     $( "#current .sample" ).text(text).html();
+    $( "#current .sample" ).wrapInner("<pre class='sample'/>");
     currentDiv.append("<input type='text' id='input'></div>");
     $( "#input" ).keyup(keypressed);
     currentDiv.append("<div class='time' id='time'>");
@@ -107,16 +121,29 @@ function startWord() {
     $( "#input" ).focus();
 }
 
+function loadDict(callback) {
+    $.when(
+        $.get(fName, function(data) {
+            samples = data.split("\n");
+        })
+    ).done( function(x) {
+        for (i=0; i<samples.length; i++)
+            used.push(0);
+        callback();
+    } );
+}
+
 function init() {
     $( "#start" ).remove();
-    for (i=0; i<samples.length; i++)
-        used.push(0);
-    startWord();
+    ignoreSpaces = $( "#ignoreSpaces" ).prop("checked");
+    $( "#ignoreSpaces" ).attr("disabled", "disabled");
+    loadDict(startWord);
 }
 
 $( document ).ready(function() {
     $( "body" ).append("<div id='mainCont'/>");
     body = $( "#mainCont" );
+    body.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' checked='checked'>Игнорировать незначащие пробелы<br/></div>");
     body.append("<button type='button' value='Начать!' onclick='init()' id='start'>Начать!</button>");
     $( "#start" ).focus();
 });

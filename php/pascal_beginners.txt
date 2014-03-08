@@ -1,0 +1,25 @@
+var i:integer;
+a:array[1..100] of integer;
+f:text;
+ok:boolean;
+x:extended;
+s:string;
+record x,y:integer; end;
+for i:=1 to n do begin
+read(n,m);
+write(a,' ',b);
+if a mod 2=0 then begin
+x:=n div 2 + 1;
+for i:=n downto 1 do
+if (a=0) and (b=0) then
+if (a=0) or (b=0) then
+end else begin
+while i*i<n do
+while true do begin
+repeat until false;
+var gr:array[1..100,1..100] of integer;
+assign(f,'input.txt');
+reset(f);
+rewrite(f);
+n:=inttostr(s);
+s:=strtoint(n);
