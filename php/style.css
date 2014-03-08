@@ -29,6 +29,7 @@ body {
     width:50em;
     text-align:center;
     margin:auto;
+    padding-top:50px;
 }
 
 #start {
@@ -87,8 +88,13 @@ pre.sample {
 }
 
 #footer {
- border-top: 1px solid #555555;
- padding-top: 5px;
- margin-top: 15px;
- font-size: 70%;
+    border-top: 1px solid #555555;
+    padding-top: 5px;
+    margin-top: 15px;
+    font-size: 70%;
+}
+
+#footer p {
+    padding-top:3px;
+    margin:0px;
 }

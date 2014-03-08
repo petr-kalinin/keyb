@@ -32,12 +32,24 @@ var samples = [];
 var fName = 'pascal_beginners.txt';
 var ignoreSpaces = true;
 
+var copyrightText = 
+        "<p>Keyb, Copyright (C) 2014 Petr Kalinin</p>" +
+        "<p>This program is free software: you can redistribute it and/or modify " +
+        "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
+        "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
+        "(at your option) any later version.</p>" +
+        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " + 
+        "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
+        " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
+        "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>";
+
+
 function finish() {
-    var s = "Total samples: " + totalOk + "<br/>" +
-            "Total length: " + totalLen + "<br/>" +
-            "Total time: " + totalTime + "<br/>";
+    var s = "Всего строк: " + totalOk + "<br/>" +
+            "Общая длина: " + totalLen + "<br/>" +
+            "Общее время: " + (totalTime/1000).toFixed(1) + " с<br/>";
     if (totalOk > 0)
-        s = s + "Average speed: " + (totalLen / totalTime * corrFactor).toFixed(2);
+        s = s + "Средняя скорость: " + (totalLen / totalTime * corrFactor).toFixed(2) + " символов/мин";
     body.append("<div class='final'>" + s +"</div>");
 }
 
@@ -102,7 +114,7 @@ function keypressed(e) {
     if (startTime < 0)
         startTime = now;
     var time = now - startTime;
-    $( "#time" ).html(time);
+    $( "#time" ).html((time/1000).toFixed(2) + " с");
     ouf = $( "#input" ).val();
     if (time > 0)
         $( "#speed" ).html((ouf.length / time * corrFactor).toFixed(2));
@@ -161,12 +173,7 @@ function init() {
 
 $( document ).ready(function() {
     $( "body" ).append("<div id='mainCont'/>");
-    $( "body" ).append("<div id='footer'>Keyb, Copyright (C) 2014 Petr Kalinin<br/>" +
-        "This program is free software: you can redistribute it and/or modify " +
-        "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
-        "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
-        "(at your option) any later version." +
-        "</div>");
+    $( "body" ).append("<div id='footer'>" + copyrightText + "</div>");
     body = $( "#mainCont" );
     body.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' checked='checked'>Игнорировать незначащие пробелы<br/></div>");
     body.append("<button type='button' value='Начать!' onclick='init()' id='start'>Начать!</button>");

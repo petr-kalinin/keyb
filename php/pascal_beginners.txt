@@ -21,5 +21,19 @@ var gr:array[1..100,1..100] of integer;
 assign(f,'input.txt');
 reset(f);
 rewrite(f);
+close(f);
 n:=inttostr(s);
 s:=strtoint(n);
+if sqr(a) + sqr(b) = sqr(c) then
+writeln(sqrt(a));
+if a=0 then break;
+if s='' then continue;
+assert(res=0,'Wrong res');
+procedure add(u,v:integer);
+procedure dfs(u:integer);
+if was[i]<>0 then exit;
+function rec(i:integer):integer;
+if l>=r then exit;
+if s[i]=' ' then inc(d);
+while r-l>1 do begin
+function less(a,b:tpoint):boolean;
