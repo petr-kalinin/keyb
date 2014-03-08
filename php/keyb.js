@@ -4,7 +4,7 @@
     Copyright (C) 2014 Petr Kalinin, petr@kalinin.nnov.ru
  
     Keyb is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
+    it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
@@ -13,7 +13,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
+    You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -33,7 +33,7 @@ var fName = 'pascal_beginners.txt';
 var ignoreSpaces = true;
 
 function finish() {
-    s = "Total samples: " + totalOk + "<br/>" +
+    var s = "Total samples: " + totalOk + "<br/>" +
             "Total length: " + totalLen + "<br/>" +
             "Total time: " + totalTime + "<br/>";
     if (totalOk > 0)
@@ -42,7 +42,7 @@ function finish() {
 }
 
 function removeDoubleSpaces(s) {
-    s1 = s[0];
+    var s1 = s[0];
     for (i=1; i<s.length; i++)
         if ((s[i]!=' ') || (s[i-1]!=' '))
             s1 += s[i];
@@ -54,7 +54,7 @@ function isWord(c) {
 }
 
 function removeSpaces(s) {
-    s1 = '';
+    var s1 = '';
     if ( ignoreSpaces ) {
         s1 = '';
         s = removeDoubleSpaces(s);
@@ -73,14 +73,14 @@ function removeSpaces(s) {
 }
 
 function processResult(time) {
-    ouf = $( "#input" ).val();
-    ok = (removeSpaces(ouf) == removeSpaces(text));
+    var ouf = $( "#input" ).val();
+    var ok = (removeSpaces(ouf) == removeSpaces(text));
     if (ok) {
         totalLen += text.length;
         totalTime += time;
         totalOk ++;
     }
-    cls = (ok? "ok" : "fail");
+    var cls = (ok? "ok" : "fail");
     $( "#input" ).replaceWith("<div class='ouf " + cls + "'></div>");
     $( "#current .ouf" ).text(ouf).html();
     $( "#current .ouf" ).innerHtml += " ";
@@ -98,10 +98,10 @@ function keypressed(e) {
     // for some reason, 'enter' key from button is duplicated to input field too
     if ((e.keyCode == 13) && (startTime < 0))
         return;
-    now = new Date().getTime();
+    var now = new Date().getTime();
     if (startTime < 0)
         startTime = now;
-    time = now - startTime;
+    var time = now - startTime;
     $( "#time" ).html(time);
     ouf = $( "#input" ).val();
     if (time > 0)
@@ -111,9 +111,9 @@ function keypressed(e) {
 }
 
 function genText() {
-    nn = 0;
+    var nn = 0;
     // the following makes us chose truly random if we have no samples left
-    seli = Math.floor(Math.random()*samples.length); 
+    var seli = Math.floor(Math.random()*samples.length); 
     for (i=0; i<samples.length; i++)
         if (used[i]==0) {
             nn++;
@@ -161,6 +161,12 @@ function init() {
 
 $( document ).ready(function() {
     $( "body" ).append("<div id='mainCont'/>");
+    $( "body" ).append("<div id='footer'>Keyb, Copyright (C) 2014 Petr Kalinin<br/>" +
+        "This program is free software: you can redistribute it and/or modify " +
+        "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
+        "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
+        "(at your option) any later version." +
+        "</div>");
     body = $( "#mainCont" );
     body.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' checked='checked'>Игнорировать незначащие пробелы<br/></div>");
     body.append("<button type='button' value='Начать!' onclick='init()' id='start'>Начать!</button>");
