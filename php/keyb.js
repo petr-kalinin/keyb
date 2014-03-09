@@ -1,4 +1,5 @@
 /*
+    @licstart
     This file is part of Keyb, a typing tutor for programming language learning
     
     Copyright (C) 2014 Petr Kalinin, petr@kalinin.nnov.ru
@@ -15,7 +16,9 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    @licend
 */
+// @source: http://keyb-olympnn.rhcloud.com/keyb.js
 
 var body;
 var text;
