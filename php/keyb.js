@@ -51,6 +51,8 @@ function finish() {
     if (totalOk > 0)
         s = s + "Средняя скорость: " + (totalLen / totalTime * corrFactor).toFixed(2) + " символов/мин";
     body.append("<div class='final'>" + s +"</div>");
+    body.append("<button type='button' onclick='restart()' id='start'>Повторить</button>");
+    $( "#start" ).focus();
 }
 
 function isWord(c) {
@@ -257,15 +259,32 @@ function init(e) {
     e.preventDefault();
 }
 
-$( document ).ready(function() {
+function fullInit() {
     $( "body" ).append("<div id='mainCont'/>");
     $( "body" ).append("<div id='footer'>" + copyrightText + "</div>");
     body = $( "#mainCont" );
     body.append("<form/>");
     form = $( "form" );
-    form.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' checked='checked'/> Игнорировать незначащие пробелы</div>");
-    form.append("<div id='numWordsDiv'>Количество строк: <input type='text' name='numWords' id='numWords' checked='checked' value='10'/></div>");
+    form.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' "
+        + (ignoreSpaces ? "checked='checked' " : "" ) + "/> Игнорировать незначащие пробелы</div>");
+    form.append("<div id='numWordsDiv'>Количество строк: <input type='text' name='numWords' id='numWords' checked='checked' value='"+totalWords+"'/></div>");
     form.append("<input type='submit' value='Начать!' onclick='' id='start'/>");
     form.submit(init);
     $( "#start" ).focus();
+}
+
+function restart() {
+    startTime = -1;
+    wordNum = 0;
+    totalLen = 0;
+    totalTime = 0;
+    totalOk = 0;
+    used = [];
+    $( "#mainCont" ).remove();
+    $( "#footer" ).remove();
+    fullInit();
+}
+
+$( document ).ready(function() {
+    fullInit();
 });
