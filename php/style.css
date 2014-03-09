@@ -93,7 +93,8 @@ body {
     margin-left:3px;
 }
 
-pre.sample {
+pre {
+    display:inline;
     margin:0px;
     padding:0px;
 }
@@ -108,4 +109,8 @@ pre.sample {
 #footer p {
     padding-top:3px;
     margin:0px;
+}
+
+pre.bad {
+    background:#ffff00;
 }

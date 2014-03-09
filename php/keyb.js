@@ -53,50 +53,133 @@ function finish() {
     body.append("<div class='final'>" + s +"</div>");
 }
 
-function removeDoubleSpaces(s) {
-    var s1 = s[0];
-    for (i=1; i<s.length; i++)
-        if ((s[i]!=' ') || (s[i-1]!=' '))
-            s1 += s[i];
-    return s1;
-}
-
 function isWord(c) {
     return (c=='_') || ((c>='A')&&(c<='Z')) || ((c>='a')&&(c<='z')) || ((c>='0')&&(c<='9'));
 }
 
-function removeSpaces(s) {
-    var s1 = '';
-    if ( ignoreSpaces ) {
-        s1 = '';
-        s = removeDoubleSpaces(s);
-        for (i=0; i<s.length; i++) {
-            if (s[i] == ' ') {
-                if (i==0) continue;
-                if (i==s.length-1) continue;
-                // we consider a space to be important iff it is surrounded by word characters
-                // or by non-word characters
-                if (isWord(s[i-1]) != isWord(s[i+1])) continue;
-            }
-            s1 += s[i];
+function isCharImportant(s, i) {
+    if (s[i] != ' ') return true;
+    l = i-1;
+    while ((l>=0) && (s[l]==' ')) l--;
+    r = i+1;
+    while ((r<s.length) && (s[r]==' ')) r++;
+    if (l<0) return false;
+    if (r>=s.length) return false;
+    // we consider a space to be important iff it is surrounded by word characters
+    // or by non-word characters
+    return (isWord(s[l]) && isWord(s[r]) && (l==i-1));
+}
+
+function protectHtml(a) {
+    if (a=='&') return "&amp;";
+    else if (a=='<') return "&lt;";
+    else if (a==">") return "&gt;";
+    else if (a=='"') return "&quot;";
+    else if (a=="'") return "&#039;";
+    else return a;
+}
+
+function processCompare(a, b) {
+
+    function formatCommonStrings(i, j, aBad, bBad) {
+        if ((i==0) && (j==0)) {
+            if (aBad) aF = "<pre class='bad'>" + aF;
+            else aF = "<pre class='sample'>" + aF;
+            if (bBad) bF = "<pre class='bad'>" + bF;
+            else bF = "<pre class='sample'>" + bF;
+            return;
         }
-    } else s1 = s;
-    return s1;
+        if (from[i][j]==1) {
+            if (!aBad) aF = "</pre><pre class='sample'>" + aF;
+            aF = protectHtml(a[i-1]) + aF;
+            formatCommonStrings(i-1, j, true, bBad);
+        } else if (from[i][j] == 2) {
+            if (!bBad) bF = "</pre><pre class='sample'>" + bF;
+            bF = protectHtml(b[j-1]) + bF;
+            formatCommonStrings(i, j-1, aBad, true);
+        } else if (from[i][j] == 3) {
+            if (aBad) aF = "</pre><pre class='bad'>" + aF;
+            if (bBad) bF = "</pre><pre class='bad'>" + bF;
+            aF = protectHtml(a[i-1]) + aF;
+            bF = protectHtml(b[j-1]) + bF;
+            formatCommonStrings(i-1, j-1, false, false);
+        } else if (from[i][j] == -1) {
+            aF = protectHtml(a[i-1]) + aF;
+            formatCommonStrings(i-1, j, aBad, bBad);
+        } else {
+            bF = protectHtml(b[j-1]) + bF;
+            formatCommonStrings(i, j-1, aBad, bBad);
+        }
+    }
+
+    var ans = new Array(a.length + 1);
+    var from = new Array(a.length + 1);
+    for (var i = 0; i <= a.length; i++) {
+        ans[i] = new Array(b.length + 1);
+        from[i] = new Array(b.length + 1);
+    }
+    ans[0][0] = 0;
+    for (var i=1; i<=b.length; i++) {
+        if (!isCharImportant(b, i-1)) {
+            ans[0][i] = ans[0][i-1];
+            from[0][i] = -2;
+        } else {
+            ans[0][i] = ans[0][i-1] + 1;
+            from[0][i] = 2;
+        }
+    }
+    for (var i=1; i<=a.length; i++) {
+        if (!isCharImportant(a, i-1)) {
+            ans[i][0] = ans[i-1][0];
+            from[i][0] = -1;
+        } else {
+            ans[i][0] = ans[i-1][0] + 1;
+            from[i][0] = 1;
+        }
+        for(var j=1; j<=b.length; j++) {
+            if (!isCharImportant(a, i-1)) {
+                ans[i][j] = ans[i-1][j];
+                from[i][j] = -1;
+            } else if (!isCharImportant(b, j-1)) {
+                ans[i][j] = ans[i][j-1];
+                from[i][j] = -2;
+            } else if (a[i-1]==b[j-1]) {
+                ans[i][j] = ans[i-1][j-1]
+                from[i][j] = 3;
+            } else if (ans[i-1][j] < ans[i][j-1]) {
+                ans[i][j] = ans[i-1][j] + 1;
+                from[i][j] = 1;
+            } else {
+                ans[i][j] = ans[i][j-1] + 1;
+                from[i][j] = 2;
+            }
+        }
+    }
+    var aF = '</pre>';
+    var bF = '</pre>';
+    formatCommonStrings(a.length, b.length, false, false);
+    return {
+        ok : (ans[a.length][b.length] == 0),
+        aF : aF,
+        bF : bF
+    };
 }
 
 function processResult(time) {
     var ouf = $( "#input" ).val();
-    var ok = (removeSpaces(ouf) == removeSpaces(text));
+    var res = processCompare(text, ouf);
+    var ok = res.ok
+    var textF = res.aF
+    var oufF = res.bF
     if (ok) {
-        totalLen += text.length;
+        totalLen += Math.min(ouf.length, text.length);
         totalTime += time;
         totalOk ++;
     }
     var cls = (ok? "ok" : "fail");
     $( "#input" ).replaceWith("<div class='ouf " + cls + "'></div>");
-    $( "#current .ouf" ).text(ouf).html();
-    $( "#current .ouf" ).innerHtml += " ";
-    $( "#current .ouf" ).wrapInner("<pre class='sample'/>");
+    $( "#current div.sample" ).html(textF + "&nbsp;");
+    $( "#current .ouf" ).html(oufF + "&nbsp;");
     $( "#time" ).removeAttr('id').addClass(cls);
     $( "#speed" ).removeAttr('id').addClass(cls);
     currentDiv.removeAttr('id');
