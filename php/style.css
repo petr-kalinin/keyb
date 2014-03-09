@@ -25,6 +25,17 @@ body {
     padding-bottom:1em;
 }
 
+#numWordsDiv {
+    padding-bottom:1em;
+}
+
+#numWords {
+    width:3em;
+    text-align:right;
+    font-family:monospace;
+    font-size:100%;
+}
+
 #mainCont {
     width:50em;
     text-align:center;
@@ -90,7 +101,7 @@ pre.sample {
 #footer {
     border-top: 1px solid #555555;
     padding-top: 5px;
-    margin-top: 15px;
+    margin-top: 60px;
     font-size: 70%;
 }
 

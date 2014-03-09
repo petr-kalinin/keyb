@@ -108,7 +108,7 @@ function processResult(time) {
 
 function keypressed(e) {
     // for some reason, 'enter' key from button is duplicated to input field too
-    if ((e.keyCode == 13) && (startTime < 0))
+    if ((e.which == 13) && (startTime < 0))
         return;
     var now = new Date().getTime();
     if (startTime < 0)
@@ -118,7 +118,7 @@ function keypressed(e) {
     ouf = $( "#input" ).val();
     if (time > 0)
         $( "#speed" ).html((ouf.length / time * corrFactor).toFixed(2));
-    if (e.keyCode == 13)
+    if (e.which == 13)
         processResult(time);
 }
 
@@ -164,18 +164,25 @@ function loadDict(callback) {
     } );
 }
 
-function init() {
+function init(e) {
     $( "#start" ).remove();
     ignoreSpaces = $( "#ignoreSpaces" ).prop("checked");
+    totalWords = parseInt( $( "#numWords" ).val() , 10);
     $( "#ignoreSpaces" ).attr("disabled", "disabled");
+    $( "#numWords" ).attr("disabled", "disabled");
     loadDict(startWord);
+    e.preventDefault();
 }
 
 $( document ).ready(function() {
     $( "body" ).append("<div id='mainCont'/>");
     $( "body" ).append("<div id='footer'>" + copyrightText + "</div>");
     body = $( "#mainCont" );
-    body.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' checked='checked'>Игнорировать незначащие пробелы<br/></div>");
-    body.append("<button type='button' value='Начать!' onclick='init()' id='start'>Начать!</button>");
+    body.append("<form/>");
+    form = $( "form" );
+    form.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' checked='checked'/> Игнорировать незначащие пробелы</div>");
+    form.append("<div id='numWordsDiv'>Количество строк: <input type='text' name='numWords' id='numWords' checked='checked' value='10'/></div>");
+    form.append("<input type='submit' value='Начать!' onclick='' id='start'/>");
+    form.submit(init);
     $( "#start" ).focus();
 });
