@@ -1,0 +1,27 @@
+int main() {
+return 0;
+cout << n << " " << m;
+#include <iostream>
+int n, m;
+cin >> n >> m;
+for (int i = 0; i < n; i++)
+vector<int> a;
+bool ok;
+long double x;
+string s;
+if (a % 2 == 0) {
+x = n / 2 + 1;
+if ((a == 0) || (b == 0))
+if ((a == 0) && (b == 0))
+} else {
+while (i * i < n) {
+while (true) {
+cout << sqrt(a);
+void add(int u, int v) 
+void dfs(int v) 
+if (was[i]) return;
+int rec(int i)
+if (l >= r) return;
+if (s[i] == ' ') d++;
+while (r - l > 1)
+bool less(point a, point b)

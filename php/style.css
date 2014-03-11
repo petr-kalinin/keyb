@@ -21,17 +21,18 @@ body {
     font-family:monospace;
 }
 
-#spacesDiv {
-    padding-bottom:1em;
-}
-
-#numWordsDiv {
+#spacesDiv, #numWordsDiv, #fNameDiv {
     padding-bottom:1em;
 }
 
 #numWords {
     width:3em;
     text-align:right;
+    font-family:monospace;
+    font-size:100%;
+}
+
+#fNameDiv select {
     font-family:monospace;
     font-size:100%;
 }

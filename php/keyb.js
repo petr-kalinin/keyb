@@ -12,13 +12,23 @@
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU General Public License <http://www.gnu.org/licenses/gpl.html> for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    The full text of the license is available at <http://www.gnu.org/licenses/gpl.html>
     @licend
 */
 // @source: http://keyb-olympnn.rhcloud.com/keyb.js
+
+var copyrightText = 
+        "<p>Keyb, Copyright (C) 2014 Petr Kalinin</p>" +
+        "<p>This program is free software: you can redistribute it and/or modify " +
+        "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
+        "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
+        "(at your option) any later version.</p>" +
+        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " + 
+        "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
+        " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
+        "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>";
 
 var body;
 var text;
@@ -32,20 +42,13 @@ var totalOk = 0;
 var corrFactor = 60 * 1000;
 var used = [];
 var samples = [];
+var fNames = {
+    'pascal_beginners.txt': 'Pascal для начинающих', 
+    'cpp_beginners.txt': 'C++ для начинающих'
+};
 var fName = 'pascal_beginners.txt';
+//var fName = 'cpp_sample.txt';
 var ignoreSpaces = true;
-
-var copyrightText = 
-        "<p>Keyb, Copyright (C) 2014 Petr Kalinin</p>" +
-        "<p>This program is free software: you can redistribute it and/or modify " +
-        "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
-        "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
-        "(at your option) any later version.</p>" +
-        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " + 
-        "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
-        " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
-        "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>";
-
 
 function finish() {
     var s = "Всего строк: " + totalOk + "<br/>" +
@@ -247,19 +250,26 @@ function loadDict(callback) {
         })
     ).done( function(x) {
         for (i=0; i<samples.length; i++)
-            used.push(0);
+            used.push(0); 
         callback();
     } );
 }
 
 function init(e) {
+    e.preventDefault();
     $( "#start" ).remove();
     ignoreSpaces = $( "#ignoreSpaces" ).prop("checked");
     totalWords = parseInt( $( "#numWords" ).val() , 10);
+    var fNameNew = $("#fName").val();
+    if (!(fNameNew in fNames)) {
+        restart();
+        return;
+    }
+    fName = fNameNew;
     $( "#ignoreSpaces" ).attr("disabled", "disabled");
     $( "#numWords" ).attr("disabled", "disabled");
+    $( "#fName" ).attr("disabled", "disabled");
     loadDict(startWord);
-    e.preventDefault();
 }
 
 function fullInit() {
@@ -268,6 +278,10 @@ function fullInit() {
     body = $( "#mainCont" );
     body.append("<form/>");
     form = $( "form" );
+    form.append("<div id='fNameDiv'>Словарь: <select name='fName' id='fName' /> </div>");
+    for(var name in fNames)
+        $( "#fName" ).append("<option value='" + name + "'>" + fNames[name] +"</option>");
+    $( "#fName option[value='" + fName + "']" ).attr("selected", "selected");
     form.append("<div id='spacesDiv'><input type='checkbox' name='ignoreSpaces' id='ignoreSpaces' "
         + (ignoreSpaces ? "checked='checked' " : "" ) + "/> Игнорировать незначащие пробелы</div>");
     form.append("<div id='numWordsDiv'>Количество строк: <input type='text' name='numWords' id='numWords' checked='checked' value='"+totalWords+"'/></div>");
