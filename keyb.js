@@ -17,7 +17,7 @@
     The full text of the license is available at <http://www.gnu.org/licenses/gpl.html>
     @licend
 */
-// @source: http://keyb-olympnn.rhcloud.com/keyb.js
+// @source: https://github.com/petr-kalinin/keyb
 
 var copyrightText = 
         "<p>Keyb, Copyright (C) 2014 Petr Kalinin</p>" +
@@ -28,7 +28,8 @@ var copyrightText =
         "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " + 
         "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
         " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
-        "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>";
+        "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>" +
+        "<a href='https://github.com/petr-kalinin/keyb'>https://github.com/petr-kalinin/keyb</a>";
 
 var body;
 var text;
