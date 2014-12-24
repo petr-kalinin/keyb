@@ -74,7 +74,7 @@ function isCharImportant(s, i) {
     if (l<0) return false;
     if (r>=s.length) return false;
     // we consider a space to be important iff it is surrounded by word characters
-    // or by non-word characters
+    // and of several succesive spaces we consider only the first
     return (isWord(s[l]) && isWord(s[r]) && (l==i-1));
 }
 
