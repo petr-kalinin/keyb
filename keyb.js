@@ -245,7 +245,7 @@ function startWord() {
 
 function loadDict(callback) {
     $.when(
-        $.get(fName, function(data) {
+        $.get("dictionaries/" + fName, function(data) {
             samples = data.split("\n");
         })
     ).done( function(x) {
