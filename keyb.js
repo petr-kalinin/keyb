@@ -29,7 +29,7 @@ var copyrightText =
         "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
         " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
         "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>" +
-        "<a href='https://github.com/petr-kalinin/keyb'>https://github.com/petr-kalinin/keyb</a>";
+        "<p><a href='https://github.com/petr-kalinin/keyb'>https://github.com/petr-kalinin/keyb</a></p>";
 
 var body;
 var text;
