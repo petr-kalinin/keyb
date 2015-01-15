@@ -40,6 +40,8 @@ var totalLen = 0;
 var totalTime = 0;
 var totalOk = 0;
 var corrFactor = 60 * 1000;
+var cookieKey = "allSpeedResults";
+var allAvgNumResults = [];
 var used = [];
 var samples = [];
 var fNames = {
@@ -50,26 +52,63 @@ var fName = 'pascal_beginners.txt';
 //var fName = 'cpp_sample.txt';
 var ignoreSpaces = true;
 
+var removeResults = function(){
+    if ($.cookie(cookieKey)){
+        var cookieObjects = $.cookie(cookieKey).split(",");
+        for(var i=0; i<=cookieObjects.length; i++){
+            $.removeCookie(cookieObjects[i]);
+        }
+        $.removeCookie(cookieKey);
+    }
+    $(".final").remove()
+};
+
+var getBestResult = function () {
+    return JSON.parse($.cookie(allAvgNumResults.sort(function (a, b) {
+        return b - a;
+    })[0].toString()));
+};
+
+function writeCookie(averageSpeed) {
+    allAvgNumResults = $.cookie(cookieKey) ? $.cookie(cookieKey).split(",") : [];
+    var totalTimeInSec = (totalTime / 1000).toFixed(1);
+    var averageNum = ((totalLen + totalOk + averageSpeed) / 2).toFixed(4);
+    var items = JSON.stringify({
+        averageSpeed: averageSpeed,
+        totalLen: totalLen,
+        totalOk: totalOk,
+        totalTimeInSec: totalTimeInSec,
+        averageNum: averageNum
+    });
+    allAvgNumResults.push(averageNum);
+    $.cookie(cookieKey, allAvgNumResults, {expires: 7});
+    $.cookie(averageNum.toString(), items, {expires: 7})
+}
+
 function finish() {
-    var s = "Всего строк: " + totalOk + "<br/>" +
-            "Общая длина: " + totalLen + "<br/>" +
-            "Общее время: " + (totalTime/1000).toFixed(1) + " с<br/>";
+    var lastResultInfo = "Последний результат: <br/>" +
+        "Всего строк: " + totalOk + "<br/>" +
+        "Общая длина: " + totalLen + "<br/>" +
+        "Общее время: " + (totalTime / 1000).toFixed(1) + " с<br/>";
     if (totalOk > 0) {
         var averageSpeed = (totalLen / totalTime * corrFactor).toFixed(2);
-        s = s + "Средняя скорость: " + averageSpeed + " символов/мин" + "<br/>";
-
-        var cookieKey = "allSpeedResults";
-        var allSpeedResults = $.cookie(cookieKey) ? $.cookie(cookieKey).split(",") : [];
-        allSpeedResults.push(averageSpeed);
-        var bestResult = allSpeedResults.sort(function(a, b){
-            return b - a;
-        })[0];
-        s += "Лучши результат: " + bestResult + "<br/>";
-        $.cookie(cookieKey, allSpeedResults, { expires: 7 });
+        lastResultInfo = lastResultInfo + "Средняя скорость: " + averageSpeed + " символов/мин" + "<br/>";
+        writeCookie(averageSpeed);
     }
 
-    body.append("<div class='final'>" + s +"</div>");
+    if(allAvgNumResults!=[]){
+        var bestResult = getBestResult();
+        var bestResultDiv = "Лучший результат: <br/>" +
+            "Всего строк: " + bestResult.totalOk + "<br/>" +
+            "Общая длина: " + bestResult.totalLen + "<br/>" +
+            "Общее время: " + bestResult.totalTimeInSec + " с<br/>" +
+            "Средняя скорость: " + bestResult.averageSpeed + " символов/мин" + "<br/>";
+    }
+
+    body.append("<div class='final'><div class='last' style='float: left;'>" + lastResultInfo +
+    "</div><div class='best' style='float: right'>" + bestResultDiv + "</div></div>");
     body.append("<button type='button' onclick='restart()' id='start'>Повторить</button>");
+    body.append("<button type='button' onclick='removeResults()' id='start'>Удалить результаты</button>");
     $( "#start" ).focus();
 }
 
@@ -248,7 +287,7 @@ function startWord() {
     currentDiv.append("<div class='sample'></div>");
     $( "#current .sample" ).text(text).html();
     $( "#current .sample" ).wrapInner("<pre class='sample'/>");
-    currentDiv.append("<input type='text' id='input'></div>");
+    currentDiv.append("<input type='text' id='input' onpaste='return false;'></div>");
     $( "#input" ).keyup(keypressed);
     currentDiv.append("<div class='time' id='time'>");
     currentDiv.append("<div class='speed' id='speed'>");
