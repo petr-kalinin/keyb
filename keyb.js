@@ -1,9 +1,9 @@
 /*
     @licstart
     This file is part of Keyb, a typing tutor for programming language learning
-    
+
     Copyright (C) 2014 Petr Kalinin, petr@kalinin.nnov.ru
- 
+
     Keyb is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -19,13 +19,13 @@
 */
 // @source: http://keyb-olympnn.rhcloud.com/keyb.js
 
-var copyrightText = 
+var copyrightText =
         "<p>Keyb, Copyright (C) 2014 Petr Kalinin</p>" +
         "<p>This program is free software: you can redistribute it and/or modify " +
         "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
         "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
         "(at your option) any later version.</p>" +
-        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " + 
+        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " +
         "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
         " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
         "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>";
@@ -43,7 +43,7 @@ var corrFactor = 60 * 1000;
 var used = [];
 var samples = [];
 var fNames = {
-    'pascal_beginners.txt': 'Pascal для начинающих', 
+    'pascal_beginners.txt': 'Pascal для начинающих',
     'cpp_beginners.txt': 'C++ для начинающих'
 };
 var fName = 'pascal_beginners.txt';
@@ -54,8 +54,20 @@ function finish() {
     var s = "Всего строк: " + totalOk + "<br/>" +
             "Общая длина: " + totalLen + "<br/>" +
             "Общее время: " + (totalTime/1000).toFixed(1) + " с<br/>";
-    if (totalOk > 0)
-        s = s + "Средняя скорость: " + (totalLen / totalTime * corrFactor).toFixed(2) + " символов/мин";
+    if (totalOk > 0) {
+        var averageSpeed = (totalLen / totalTime * corrFactor).toFixed(2);
+        s = s + "Средняя скорость: " + averageSpeed + " символов/мин" + "<br/>";
+
+        var cookieKey = "allSpeedResults";
+        var allSpeedResults = $.cookie(cookieKey) ? $.cookie(cookieKey).split(",") : [];
+        allSpeedResults.push(averageSpeed);
+        var bestResult = allSpeedResults.sort(function(a, b){
+            return b - a;
+        })[0];
+        s += "Лучши результат: " + bestResult + "<br/>";
+        $.cookie(cookieKey, allSpeedResults, { expires: 7 });
+    }
+
     body.append("<div class='final'>" + s +"</div>");
     body.append("<button type='button' onclick='restart()' id='start'>Повторить</button>");
     $( "#start" ).focus();
@@ -216,14 +228,14 @@ function keypressed(e) {
 function genText() {
     var nn = 0;
     // the following makes us chose truly random if we have no samples left
-    var seli = Math.floor(Math.random()*samples.length); 
+    var seli = Math.floor(Math.random()*samples.length);
     for (i=0; i<samples.length; i++)
         if (used[i]==0) {
             nn++;
             if (Math.floor(Math.random()*nn)==0)
                 seli = i;
         }
-    used[seli] = 1; 
+    used[seli] = 1;
     return samples[seli];
 }
 
@@ -250,7 +262,7 @@ function loadDict(callback) {
         })
     ).done( function(x) {
         for (i=0; i<samples.length; i++)
-            used.push(0); 
+            used.push(0);
         callback();
     } );
 }
