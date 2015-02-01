@@ -1,9 +1,9 @@
 /*
     @licstart
     This file is part of Keyb, a typing tutor for programming language learning
-    
+
     Copyright (C) 2014 Petr Kalinin, petr@kalinin.nnov.ru
- 
+
     Keyb is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -19,13 +19,13 @@
 */
 // @source: https://github.com/petr-kalinin/keyb
 
-var copyrightText = 
+var copyrightText =
         "<p>Keyb, Copyright (C) 2014 Petr Kalinin</p>" +
         "<p>This program is free software: you can redistribute it and/or modify " +
         "it under the terms of the <a href='http://www.gnu.org/licenses/gpl.html'>GNU General Public License</a> as published by " +
         "the <a href='http://www.fsf.org'>Free Software Foundation</a>, either version 3 of the License, or " +
         "(at your option) any later version.</p>" +
-        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " + 
+        "<p>Данная программа является свободным ПО. Вы можете распространять и/или модифицировать её " +
         "в соответствии с <a href='http://www.gnu.org/licenses/gpl.html'>Общей Лицензией GNU</a> " +
         " (GNU General Public License), опубликованной <a href='http://www.fsf.org'>Фондом свободного ПО</a> " +
         "(Free Software Foundation), либо версии 3 Лицензии, либо (по Вашему желанию) любой последующей версии.</p>" +
@@ -41,24 +41,76 @@ var totalLen = 0;
 var totalTime = 0;
 var totalOk = 0;
 var corrFactor = 60 * 1000;
+var cookieKey = "allSpeedResults";
+var allAvgNumResults = [];
 var used = [];
 var samples = [];
 var fNames = {
-    'pascal_beginners.txt': 'Pascal для начинающих', 
+    'pascal_beginners.txt': 'Pascal для начинающих',
     'cpp_beginners.txt': 'C++ для начинающих'
 };
 var fName = 'pascal_beginners.txt';
 //var fName = 'cpp_sample.txt';
 var ignoreSpaces = true;
 
+var removeResults = function(){
+    if ($.cookie(cookieKey)){
+        var cookieObjects = $.cookie(cookieKey).split(",");
+        for(var i=0; i<=cookieObjects.length; i++){
+            $.removeCookie(cookieObjects[i]);
+        }
+        $.removeCookie(cookieKey);
+    }
+    $(".final").remove()
+};
+
+var getBestResult = function () {
+    return JSON.parse($.cookie(allAvgNumResults.sort(function (a, b) {
+        return b - a;
+    })[0].toString()));
+};
+
+function writeCookie(averageSpeed) {
+    allAvgNumResults = $.cookie(cookieKey) ? $.cookie(cookieKey).split(",") : [];
+    var totalTimeInSec = (totalTime / 1000).toFixed(1);
+    // Assume that 5 correct words are the minimal required for good statistics 
+    var averageNum = ((totalOk >= 5) ? (1.0*averageSpeed) : (0.5*averageSpeed)).toFixed(4);
+    var items = JSON.stringify({
+        averageSpeed: averageSpeed,
+        totalLen: totalLen,
+        totalOk: totalOk,
+        totalTimeInSec: totalTimeInSec,
+        averageNum: averageNum
+    });
+    allAvgNumResults.push(averageNum);
+    $.cookie(cookieKey, allAvgNumResults, {expires: 7});
+    $.cookie(averageNum.toString(), items, {expires: 7})
+}
+
 function finish() {
-    var s = "Всего строк: " + totalOk + "<br/>" +
-            "Общая длина: " + totalLen + "<br/>" +
-            "Общее время: " + (totalTime/1000).toFixed(1) + " с<br/>";
-    if (totalOk > 0)
-        s = s + "Средняя скорость: " + (totalLen / totalTime * corrFactor).toFixed(2) + " символов/мин";
-    body.append("<div class='final'>" + s +"</div>");
+    var lastResultInfo = "Последний результат: <br/>" +
+        "Всего строк: " + totalOk + "<br/>" +
+        "Общая длина: " + totalLen + "<br/>" +
+        "Общее время: " + (totalTime / 1000).toFixed(1) + " с<br/>";
+    if (totalOk > 0) {
+        var averageSpeed = (totalLen / totalTime * corrFactor).toFixed(2);
+        lastResultInfo = lastResultInfo + "Средняя скорость: " + averageSpeed + " символов/мин" + "<br/>";
+        writeCookie(averageSpeed);
+    }
+
+    if(allAvgNumResults!=[]){
+        var bestResult = getBestResult();
+        var bestResultDiv = "Лучший результат: <br/>" +
+            "Всего строк: " + bestResult.totalOk + "<br/>" +
+            "Общая длина: " + bestResult.totalLen + "<br/>" +
+            "Общее время: " + bestResult.totalTimeInSec + " с<br/>" +
+            "Средняя скорость: " + bestResult.averageSpeed + " символов/мин" + "<br/>";
+    }
+
+    body.append("<div class='final'><div class='last' style='float: left;'>" + lastResultInfo +
+    "</div><div class='best' style='float: right'>" + bestResultDiv + "</div></div>");
     body.append("<button type='button' onclick='restart()' id='start'>Повторить</button>");
+    body.append("<button type='button' onclick='removeResults()' id='start'>Удалить результаты</button>");
     $( "#start" ).focus();
 }
 
@@ -217,14 +269,14 @@ function keypressed(e) {
 function genText() {
     var nn = 0;
     // the following makes us chose truly random if we have no samples left
-    var seli = Math.floor(Math.random()*samples.length); 
+    var seli = Math.floor(Math.random()*samples.length);
     for (i=0; i<samples.length; i++)
         if (used[i]==0) {
             nn++;
             if (Math.floor(Math.random()*nn)==0)
                 seli = i;
         }
-    used[seli] = 1; 
+    used[seli] = 1;
     return samples[seli];
 }
 
@@ -237,7 +289,7 @@ function startWord() {
     currentDiv.append("<div class='sample'></div>");
     $( "#current .sample" ).text(text).html();
     $( "#current .sample" ).wrapInner("<pre class='sample'/>");
-    currentDiv.append("<input type='text' id='input'></div>");
+    currentDiv.append("<input type='text' id='input' onpaste='return false;'></div>");
     $( "#input" ).keyup(keypressed);
     currentDiv.append("<div class='time' id='time'>");
     currentDiv.append("<div class='speed' id='speed'>");
@@ -247,11 +299,11 @@ function startWord() {
 function loadDict(callback) {
     $.when(
         $.get("dictionaries/" + fName, function(data) {
-            samples = data.split("\n");
+            samples = data.split("\r\n");
         })
     ).done( function(x) {
         for (i=0; i<samples.length; i++)
-            used.push(0); 
+            used.push(0);
         callback();
     } );
 }
