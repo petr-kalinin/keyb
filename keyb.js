@@ -72,7 +72,8 @@ var getBestResult = function () {
 function writeCookie(averageSpeed) {
     allAvgNumResults = $.cookie(cookieKey) ? $.cookie(cookieKey).split(",") : [];
     var totalTimeInSec = (totalTime / 1000).toFixed(1);
-    var averageNum = ((totalLen + totalOk + averageSpeed) / 2).toFixed(4);
+    // Assume that 5 correct words are the minimal required for good statistics 
+    var averageNum = ((totalOk >= 5) ? (1.0*averageSpeed) : (0.5*averageSpeed)).toFixed(4);
     var items = JSON.stringify({
         averageSpeed: averageSpeed,
         totalLen: totalLen,
