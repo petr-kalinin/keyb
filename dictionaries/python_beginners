@@ -1,0 +1,24 @@
+a = int(input())
+from math import *
+if a != 0:
+for i in range(n):
+for x in a:
+while a != 0:
+print(a, b, sep="")
+a = [0] * n
+a = [0 for i in range(n)]
+a, b = map(int, input().split())
+f = True
+f = False
+if a % 2 == 0:
+if a == 0 and b == 0:
+elif a == 0 or b == 0:
+while i * i <= n:
+if a ** 2 + b ** 2 == c ** 2:
+print(sqrt(a))
+assert a != 0
+def add(u, v):
+if was[i] != 0:
+return
+while r - l > 1:
+def less(a, b):

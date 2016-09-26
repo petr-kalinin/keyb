@@ -46,10 +46,11 @@ var allAvgNumResults = [];
 var used = [];
 var samples = [];
 var fNames = {
+    'python_beginners.txt': 'Python для начинающих',
     'pascal_beginners.txt': 'Pascal для начинающих',
     'cpp_beginners.txt': 'C++ для начинающих'
 };
-var fName = 'pascal_beginners.txt';
+var fName = 'python_beginners.txt';
 //var fName = 'cpp_sample.txt';
 var ignoreSpaces = true;
 
